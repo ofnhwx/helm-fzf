@@ -55,6 +55,7 @@
     (helm :sources '(helm-fzf-source)
           :buffer "*helm-fzf*")))
 
+;;;###autoload
 (defun helm-fzf-project-root ()
   (interactive)
   (let ((default-directory (helm-fzf--project-root)))
