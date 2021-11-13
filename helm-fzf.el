@@ -22,6 +22,11 @@
   :type 'stringp
   :group 'helm-fzf)
 
+(defcustom helm-fzf-args '("--no-sort")
+  "Default arguments for fzf"
+  :type '(repeat string)
+  :group 'helm-fzf)
+
 (defun helm-fzf--project-root ()
   (cl-loop for dir in '(".git/" ".hg/" ".svn/" ".git")
            when (locate-dominating-file default-directory dir)
@@ -36,10 +41,12 @@
     :candidate-number-limit 9999))
 
 (defun helm-fzf--do-candidate-process ()
-  (let* ((cmd-args (-filter 'identity (list helm-fzf-executable
-                                            "--no-sort"
-                                            "-f"
-                                            helm-pattern)))
+  (let* ((cmd-args (->> (list helm-fzf-executable
+                              helm-fzf-args
+                              "-f"
+                              helm-pattern)
+                        (-flatten)
+                        (-filter 'identity)))
          (proc (apply 'start-file-process "helm-fzf" helm-buffer cmd-args)))
     (prog1 proc
       (set-process-sentinel
